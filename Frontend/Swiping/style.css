@@ -1,6 +1,15 @@
+:root {
+    --light-green: #809848;
+    --dark-green: #1e441e;
+    --light-blue: #759fbc;
+    --dark-blue: #032b43;
+    --brown: #4e3818;
+}
+
 body {
-    margin: 0 auto;
-    max-width: 30em;
+    /* margin: 0 auto; */
+    /* max-width: 30em; */
+    background-color: var(--light-green);
 }
 
 h1 {
@@ -9,8 +18,8 @@ h1 {
 
 header {
     margin-top: 10px;
-    padding: 10px;
-    background-color: CornflowerBlue;
+    /* padding: 10px; */
+    background-color: var(--dark-green);
     border: solid;
     border-radius: 10px;
 }
@@ -20,18 +29,26 @@ header {
     gap: 10px;
 }
 
+.column {
+    flex: 4;
+}
+
 .button {
     flex: 1;
     margin-top: 10px;
 }
 
 .content {
+    padding: 10px;
     flex: 8;
     background-image: url("../../img/lake1.png");
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
     margin-top: 10px;
+    border-radius: 10px;
+    border: solid;
+    border-color: var(--dark-blue);
 }
 
 footer {
