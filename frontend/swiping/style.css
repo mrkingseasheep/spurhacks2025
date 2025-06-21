@@ -1,20 +1,26 @@
 :root {
-    --common: #022806;
-    --less: #295724;
-    --least: #598a42;
-    --important: #598a42;
-    --dull: #325651;
-
-    --light-green: #809848;
-    --dark-green: #1e441e;
-    --light-blue: #759fbc;
-    --dark-blue: #032b43;
-    --brown: #4e3818;
+    --dark-blue: #333446;
+    --blue: #7f8caa;
+    --light-blue: #b8cfce;
+    --grey: #eaefef;
+    /**/
+    /*     --common: #022806; */
+    /*     --less: #295724; */
+    /*     --least: #598a42; */
+    /*     --important: #598a42; */
+    /*     --dull: #325651; */
+    /**/
+    /*     --light-green: #809848; */
+    /*     --dark-green: #1e441e; */
+    /*     --light-blue: #759fbc; */
+    /*     --dark-blue: #032b43; */
+    /*     --brown: #4e3818; */
 }
 
 body {
     margin: 0px;
-    background-color: var(--least);
+    background-color: var(--grey);
+    /* background-image: url("../../img/weedtree.jpg"); */
 }
 
 .container {
@@ -24,29 +30,30 @@ body {
 
 .col-header {
     flex: 1;
-    background-color: var(--common);
+    background-color: var(--blue);
 }
 
 .navbar {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background-color: var(--least);
+    background-color: var(--blue);
 }
 
 .navbar a {
+    margin-top: 10px;
     padding: 10px;
-    background-color: var(--less);
+    background-color: var(--blue);
     float: top;
 }
 
 .navbar a:hover {
-    background-color: var(--least);
+    background-color: var(--light-blue);
 }
 
 .scroll {
     margin: 0 auto;
-    max-width: 30em;
+    max-width: 25em;
 }
 
 .col-scroll {
@@ -62,12 +69,22 @@ body {
     background-attachment: fixed;
     background-size: cover;
     border: solid;
-    border-radius: 10px;
+    border-radius: 20px;
     border-color: var(--dark-blue);
 }
 
 .col-button {
     flex: 1;
-    background-color: var(--light-green);
+    /* background-color: var(--light-green); */
     background-image: url(../../img/thumbs-up.png);
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+.row-button {
+    flex: 1;
 }
