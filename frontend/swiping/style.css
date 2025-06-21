@@ -1,0 +1,73 @@
+:root {
+    --common: #022806;
+    --less: #295724;
+    --least: #598a42;
+    --important: #598a42;
+    --dull: #325651;
+
+    --light-green: #809848;
+    --dark-green: #1e441e;
+    --light-blue: #759fbc;
+    --dark-blue: #032b43;
+    --brown: #4e3818;
+}
+
+body {
+    margin: 0px;
+    background-color: var(--least);
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.col-header {
+    flex: 1;
+    background-color: var(--common);
+}
+
+.navbar {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: var(--least);
+}
+
+.navbar a {
+    padding: 10px;
+    background-color: var(--less);
+    float: top;
+}
+
+.navbar a:hover {
+    background-color: var(--least);
+}
+
+.scroll {
+    margin: 0 auto;
+    max-width: 30em;
+}
+
+.col-scroll {
+    flex: 7;
+}
+
+.col-content {
+    flex: 9;
+    margin: 10px;
+    padding: 10px;
+    background-image: url("../../img/lake1.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    border: solid;
+    border-radius: 10px;
+    border-color: var(--dark-blue);
+}
+
+.col-button {
+    flex: 1;
+    background-color: var(--light-green);
+    background-image: url(../../img/thumbs-up.png);
+}
