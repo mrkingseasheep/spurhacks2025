@@ -46,10 +46,12 @@ function handleJoystick(x) {
 
 // Serial connection
 connectBtn.addEventListener("click", async () => {
+
     try {
         const port = await navigator.serial.requestPort();
         await port.open({ baudRate: 9600 });
         connectBtn.style.display = "none";
+
 
         const decoder = new TextDecoderStream();
         port.readable.pipeTo(decoder.writable);
