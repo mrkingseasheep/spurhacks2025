@@ -2,6 +2,7 @@ import os
 import time
 import json
 import re
+import dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -14,6 +15,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import google.generativeai as genai
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 # --- Gemini setup ---
 genai.configure(api_key=('AIzaSyA1nE9p0aD0I7wBy4hzE5JkDwRdF-X2T2Q'))
@@ -133,6 +136,13 @@ def safe_click(driver, element):
     time.sleep(2)
 
 def append_to_json(data, output_path):
+    # Remove or convert ObjectId before writing to JSON
+    def clean(doc):
+        if isinstance(doc, dict) and "_id" in doc:
+            doc = dict(doc)  # Make a copy
+            doc["_id"] = str(doc["_id"])
+        return doc
+
     if os.path.exists(output_path):
         with open(output_path, "r", encoding="utf-8") as f:
             try:
@@ -142,9 +152,9 @@ def append_to_json(data, output_path):
     else:
         existing_data = []
     if isinstance(existing_data, list):
-        existing_data.extend(data)
+        existing_data.extend([clean(d) for d in data])
     else:
-        existing_data = data
+        existing_data = [clean(d) for d in data]
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(existing_data, f, indent=2, ensure_ascii=False)
 
@@ -155,7 +165,11 @@ def go_back_and_wait(driver, by, value, timeout=10):
 
 def click_view_previous_map(driver):
     try:
-        btn = driver.find_element(By.CSS_SELECTOR, '[aria-label="View previous map"]')
+        btns = driver.find_elements(By.CSS_SELECTOR, '[aria-label="View previous map"]')
+        if not btns:
+            print("No 'View previous map' button found on this page.")
+            return
+        btn = btns[0]
         driver.execute_script("arguments[0].scrollIntoView(true);", btn)
         btn.click()
         time.sleep(2)
@@ -187,8 +201,20 @@ if __name__ == '__main__':
 
     output_path = "campsite_data.json"
 
+    # --- MongoDB setup (before your main loops) ---
+    uri = "mongodb+srv://ethanoly:nyCknT3J8fOPwLz0@judgejam.5bpp3ii.mongodb.net/?retryWrites=true&w=majority&appName=JudgeJam"
+    client = MongoClient(uri,tls=True, server_api=ServerApi('1'))
+    db = client["ontario_parks"]
+    collection = db["campsites"]
+
+    try:
+        client.admin.command('ping')
+        print("Pinged your deployment. You successfully connected to MongoDB!")
+    except Exception as e:
+        print(e)
+
     # --- Loop through regions ---
-    region_texts = get_maplink_button_texts(driver)
+    region_texts = get_maplink_button_texts(driver)[4:]  # Skip the first region button
     for region_text in region_texts:
         click_maplink_by_text(driver, region_text)
         time.sleep(2)
@@ -230,9 +256,15 @@ if __name__ == '__main__':
                         )
                         # Add photo URL and page URL to the info dict
                         if isinstance(info, dict):
-
                             info["Page URL"] = driver.current_url
                         campsite_data.append(info)
+
+                        # --- Upload each campsite to MongoDB as soon as it's scraped ---
+                        if isinstance(info, dict):
+                            collection.insert_one(info)
+                        else:
+                            print("Skipped non-dict info for MongoDB insert.")
+
                     except Exception as e:
                         print(f"Error processing panel: {e}")
 
