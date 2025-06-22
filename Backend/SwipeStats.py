@@ -82,14 +82,6 @@ campsite_data = fetch_campsite_docs(all_ids)
 scores, max_score = score_campsites(group_preferences, campsite_data)
 ratings = rate_campsites(scores, max_score)
 
-# Output
-print("\n🏕️ Campsites with Ratings (closer to 0.9 is better):\n")
-for cid, site in campsite_data.items():
-    rating = ratings[cid]
-    print(f"Site: {cid} | Park: {site.get('Provincial Park')} | Site #: {site.get('Campsite number')} | "
-          f"Score: {scores[cid]} | Normalized: {rating['normalized_score']} | "
-          f"Distance from 0.9: {rating['match_distance']}")
-
 best_campsites = pick_best_campsites(ratings, campsite_data, top_n=3)  # top 3 matches
 
 print("\n🌟 Best Matched Campsites:\n")
