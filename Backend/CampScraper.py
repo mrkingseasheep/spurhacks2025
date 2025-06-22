@@ -2,6 +2,9 @@ import os
 import time
 import json
 import re
+import dotenv
+import requests
+import hashlib
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -14,6 +17,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import google.generativeai as genai
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 # --- Gemini setup ---
 genai.configure(api_key=('AIzaSyA1nE9p0aD0I7wBy4hzE5JkDwRdF-X2T2Q'))
@@ -133,6 +138,13 @@ def safe_click(driver, element):
     time.sleep(2)
 
 def append_to_json(data, output_path):
+    # Remove or convert ObjectId before writing to JSON
+    def clean(doc):
+        if isinstance(doc, dict) and "_id" in doc:
+            doc = dict(doc)  # Make a copy
+            doc["_id"] = str(doc["_id"])
+        return doc
+
     if os.path.exists(output_path):
         with open(output_path, "r", encoding="utf-8") as f:
             try:
@@ -142,9 +154,9 @@ def append_to_json(data, output_path):
     else:
         existing_data = []
     if isinstance(existing_data, list):
-        existing_data.extend(data)
+        existing_data.extend([clean(d) for d in data])
     else:
-        existing_data = data
+        existing_data = [clean(d) for d in data]
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(existing_data, f, indent=2, ensure_ascii=False)
 
@@ -155,12 +167,49 @@ def go_back_and_wait(driver, by, value, timeout=10):
 
 def click_view_previous_map(driver):
     try:
-        btn = driver.find_element(By.CSS_SELECTOR, '[aria-label="View previous map"]')
+        btns = driver.find_elements(By.CSS_SELECTOR, '[aria-label="View previous map"]')
+        if not btns:
+            print("No 'View previous map' button found on this page.")
+            return
+        btn = btns[0]
         driver.execute_script("arguments[0].scrollIntoView(true);", btn)
         btn.click()
         time.sleep(2)
     except Exception as e:
         print(f"Could not click 'View previous map' button: {e}")
+
+# --- Image download setup ---
+os.makedirs("images", exist_ok=True)
+
+def download_image(image_url, campsite_id):
+    if not image_url or not image_url.startswith('http'):
+        return image_url
+
+    try:
+        url_hash = hashlib.md5(image_url.encode()).hexdigest()[:8]
+        filename = f"campsite_{campsite_id}_{url_hash}.jpg"
+        local_path = os.path.join("images", filename)
+
+        if os.path.exists(local_path):
+            return f"./images/{filename}"
+
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Referer': 'https://reservations.ontarioparks.ca/'
+        }
+
+        response = requests.get(image_url, headers=headers, timeout=10)
+        response.raise_for_status()
+
+        with open(local_path, 'wb') as f:
+            f.write(response.content)
+
+        print(f"Downloaded image: {filename}")
+        return f"./images/{filename}"
+
+    except Exception as e:
+        print(f"Failed to download image {image_url}: {e}")
+        return image_url
 
 if __name__ == '__main__':
     # --- Selenium setup ---
@@ -187,8 +236,20 @@ if __name__ == '__main__':
 
     output_path = "campsite_data.json"
 
+    # --- MongoDB setup (before your main loops) ---
+    uri = "mongodb+srv://ethanoly:nyCknT3J8fOPwLz0@judgejam.5bpp3ii.mongodb.net/?retryWrites=true&w=majority&appName=JudgeJam"
+    client = MongoClient(uri,tls=True, server_api=ServerApi('1'))
+    db = client["ontario_parks"]
+    collection = db["campsites"]
+
+    try:
+        client.admin.command('ping')
+        print("Pinged your deployment. You successfully connected to MongoDB!")
+    except Exception as e:
+        print(e)
+
     # --- Loop through regions ---
-    region_texts = get_maplink_button_texts(driver)
+    region_texts = get_maplink_button_texts(driver)[0:]  # Skip the first region button
     for region_text in region_texts:
         click_maplink_by_text(driver, region_text)
         time.sleep(2)
@@ -229,10 +290,17 @@ if __name__ == '__main__':
                             panel_html, data_resource, campground_name, provincial_park
                         )
                         # Add photo URL and page URL to the info dict
-                        if isinstance(info, dict):
+                        if isinstance(info, dict) and info.get("Campsite Photo"):
+                            original_url = info["Campsite Photo"]
+                            local_path = download_image(original_url, data_resource)
+                            info["Campsite Photo"] = local_path
+                            info["Original Photo URL"] = original_url
+                            # --- Upload each campsite to MongoDB as soon as it's scraped ---
+                            if isinstance(info, dict):
+                                collection.insert_one(info)
+                            else:
+                                print("Skipped non-dict info for MongoDB insert.")
 
-                            info["Page URL"] = driver.current_url
-                        campsite_data.append(info)
                     except Exception as e:
                         print(f"Error processing panel: {e}")
 
