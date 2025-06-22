@@ -1,7 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -46,9 +46,29 @@ def get_items():
     return jsonify(next_camp)
 
 
+results_db = client["results"]
+likes = results_db["likes"]
+hates = results_db["hates"]
+
+
+@app.route("/submit", methods=["POST"])
+def submit():
+    data = request.json  # Expecting JSON data from client
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    if data["likes"]:
+        result = likes.insert_one(data)
+    else:
+        result = hates.insert_one(data)
+
+    return jsonify({"message": "Data inserted", "id": str(result.inserted_id)})
+
+
 @app.route("/api/top-campsites")
 def top_campsites():
-    from Backend.SwipeStats import get_top_campsites  # You may need to adjust the import path
+    from Backend.SwipeStats import \
+        get_top_campsites  # You may need to adjust the import path
 
     top_2 = get_top_campsites(2)
     return jsonify(top_2)
