@@ -3,6 +3,8 @@ import time
 import json
 import re
 import dotenv
+import requests
+import hashlib
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -176,6 +178,39 @@ def click_view_previous_map(driver):
     except Exception as e:
         print(f"Could not click 'View previous map' button: {e}")
 
+# --- Image download setup ---
+os.makedirs("images", exist_ok=True)
+
+def download_image(image_url, campsite_id):
+    if not image_url or not image_url.startswith('http'):
+        return image_url
+
+    try:
+        url_hash = hashlib.md5(image_url.encode()).hexdigest()[:8]
+        filename = f"campsite_{campsite_id}_{url_hash}.jpg"
+        local_path = os.path.join("images", filename)
+
+        if os.path.exists(local_path):
+            return f"./images/{filename}"
+
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Referer': 'https://reservations.ontarioparks.ca/'
+        }
+
+        response = requests.get(image_url, headers=headers, timeout=10)
+        response.raise_for_status()
+
+        with open(local_path, 'wb') as f:
+            f.write(response.content)
+
+        print(f"Downloaded image: {filename}")
+        return f"./images/{filename}"
+
+    except Exception as e:
+        print(f"Failed to download image {image_url}: {e}")
+        return image_url
+
 if __name__ == '__main__':
     # --- Selenium setup ---
     options = Options()
@@ -214,7 +249,7 @@ if __name__ == '__main__':
         print(e)
 
     # --- Loop through regions ---
-    region_texts = get_maplink_button_texts(driver)[4:]  # Skip the first region button
+    region_texts = get_maplink_button_texts(driver)[0:]  # Skip the first region button
     for region_text in region_texts:
         click_maplink_by_text(driver, region_text)
         time.sleep(2)
@@ -255,15 +290,16 @@ if __name__ == '__main__':
                             panel_html, data_resource, campground_name, provincial_park
                         )
                         # Add photo URL and page URL to the info dict
-                        if isinstance(info, dict):
-                            info["Page URL"] = driver.current_url
-                        campsite_data.append(info)
-
-                        # --- Upload each campsite to MongoDB as soon as it's scraped ---
-                        if isinstance(info, dict):
-                            collection.insert_one(info)
-                        else:
-                            print("Skipped non-dict info for MongoDB insert.")
+                        if isinstance(info, dict) and info.get("Campsite Photo"):
+                            original_url = info["Campsite Photo"]
+                            local_path = download_image(original_url, data_resource)
+                            info["Campsite Photo"] = local_path
+                            info["Original Photo URL"] = original_url
+                            # --- Upload each campsite to MongoDB as soon as it's scraped ---
+                            if isinstance(info, dict):
+                                collection.insert_one(info)
+                            else:
+                                print("Skipped non-dict info for MongoDB insert.")
 
                     except Exception as e:
                         print(f"Error processing panel: {e}")
