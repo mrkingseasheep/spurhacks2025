@@ -13,16 +13,30 @@
             <img src="../../img/logo.gif" class="flyRight" />
             <nav class="navbar">
                 <a href="../../index.html">Home</a>
+                <a href="../swiping/index.html">Swipe</a>
                 <a href="../results/">Results</a>
-                <a href="../swiping/">Results</a>
             </nav>
         </aside>
         <main>
-            <!--for the rankings -->
-            <div class="card" id="card1">
-                <img id="img1" src="" alt="Campsite 1 Photo" />
-                <div class="overlay">
-                    <h3 id="name1"></h3>
+            <section class="container">
+                <header class="column">
+                   <h1>Results</h1> 
+                </header>
+                <!--for the rankings -->
+                <div class= "card">
+                    <img id="img1" src="C:\Users\vanes\Downloads\spurhacks2025\img\lake1.png" alt="Camp 1">
+                    <div class = "overlay">
+                        <h3>#1 + Campstite name</h3>
+                       <p id="myParagraph"></p>
+
+                        <script>
+                        const url = "https://www.google.com/";
+                        document.getElementById("myParagraph").innerHTML =
+                        `<a href="${url}" target="_blank">${url}</a>`;
+                        </script>
+
+
+                    </div>
                 </div>
             </div>
             <div class="card" id="card2">

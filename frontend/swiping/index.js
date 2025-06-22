@@ -8,6 +8,7 @@ const infoBox = document.getElementById("useful-info");
 var camp_id = "xxx";
 var img_path = "/path/to/nowhere";
 var privacy = "privacy";
+var likes = false;
 
 // ------------------------------------------------
 // -HARDWARE STUFF---------------------------------
@@ -98,6 +99,7 @@ prevBtn.addEventListener("click", () => {
     fetch("http://localhost:5000/api/items")
         .then((response) => response.json())
         .then((data) => {
+            likes = false;
             camp_id = data["_id"];
             img_path = "../." + data["Campsite Photo"];
             privacy = data["Privacy"];
@@ -117,6 +119,7 @@ nextBtn.addEventListener("click", () => {
     fetch("http://localhost:5000/api/items")
         .then((response) => response.json())
         .then((data) => {
+            likes = true;
             camp_id = data["_id"];
             img_path = "../." + data["Campsite Photo"];
             privacy = data["Privacy"];
@@ -132,5 +135,25 @@ nextBtn.addEventListener("click", () => {
 sitePic.addEventListener("animationend", () => {
     sitePic.classList.remove("flyRight");
     sitePic.classList.remove("flyLeft");
-    //     sitePic.style.backgroundImage = `url('../../img/weedtree.jpg')`;
+
+    const data = {
+        id: camp_id,
+        likes: likes,
+    };
+
+    fetch("http://localhost:5000/submit", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    })
+        .then((response) => response.json())
+        .then((result) => {
+            console.log("Success:", result);
+            // alert("Server response: " + result.message);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
 });
