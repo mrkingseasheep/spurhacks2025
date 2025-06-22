@@ -2,32 +2,24 @@ const sitePic = document.getElementById("sitePic");
 const nextBtn = document.getElementById("nextBtn");
 const prevBtn = document.getElementById("prevBtn");
 
+function newSitePath() {
+    // return "../../img/lake1.png";
+    return "../../img/weedtree.jpg";
+}
+
 nextBtn.addEventListener("click", () => {
-    sitePic.classList.remove("flyLeft");
-    if (sitePic.classList.contains("flyRight")) {
-        sitePic.classList.remove("flyRight");
-        console.log("removing animation");
-    } else {
-        sitePic.classList.add("flyRight");
-        console.log("started animation");
-    }
+    sitePic.classList.add("flyRight");
 });
 
 prevBtn.addEventListener("click", () => {
-    sitePic.classList.remove("flyRight");
-    if (sitePic.classList.contains("flyLeft")) {
-        sitePic.classList.remove("flyLeft");
-        console.log("removing animation");
-    } else {
-        sitePic.classList.add("flyLeft");
-        console.log("started animation");
-    }
+    sitePic.classList.add("flyLeft");
+    console.log("flying left");
 });
 
-function nextSite() {
-    sitePic.style.backgroundImage = 'url("../../img/lake1.png")';
-}
-
-function prevSite() {
-    sitePic.style.backgroundImage = 'url("../../img/weedtree.jpg")';
-}
+sitePic.addEventListener("animationend", () => {
+    sitePic.classList.remove("flyRight");
+    sitePic.classList.remove("flyLeft");
+    let newImagePath = newSitePath();
+    sitePic.style.backgroundImage = `url(${newImagePath})`;
+    console.log("flying right, weetree");
+});
