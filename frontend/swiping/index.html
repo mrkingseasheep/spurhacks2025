@@ -10,28 +10,19 @@
     </head>
     <body class="container">
         <header class="col-header">
-            <img src="../../img/logo.gif" />
+            <img src="../../img/logo.gif" class="flyRight" />
             <section class="navbar">
-                <a href="#">Home</a>
-                <a href="#">Results</a>
+                <a href="../../index.html">Home</a>
+                <a href="../../results/index.html">Results</a>
                 <a href="#">Register</a>
                 <a href="#">About</a>
             </section>
         </header>
-        <section class="col-scroll">
-            <section class="container scroll">
-                <main class="col-content"></main>
-                <section class="col-button button-container">
-                    <section class="row-button">Balls</section>
-                    <section class="row-button">Balls</section>
-                    <section class="row-button">Balls</section>
-                    <section class="row-button">Balls</section>
-                    <section class="row-button">Cock</section>
-                    <section class="row-button">Chong</section>
-                </section>
-            </section>
+        <section class="interactive">
+            <button id="prevBtn" type="button">Previous image</button>
+            <div id="sitePic" class="img-wrapper swipeRight"></div>
+            <button id="nextBtn" type="button">Next image</button>
         </section>
-        <!-- <footer>Created with MongoDB</footer> -->
-        <script src="index.js"></script>
     </body>
+    <script src="index.js"></script>
 </html>

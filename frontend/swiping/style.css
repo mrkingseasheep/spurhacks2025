@@ -3,24 +3,11 @@
     --blue: #7f8caa;
     --light-blue: #b8cfce;
     --grey: #eaefef;
-    /**/
-    /*     --common: #022806; */
-    /*     --less: #295724; */
-    /*     --least: #598a42; */
-    /*     --important: #598a42; */
-    /*     --dull: #325651; */
-    /**/
-    /*     --light-green: #809848; */
-    /*     --dark-green: #1e441e; */
-    /*     --light-blue: #759fbc; */
-    /*     --dark-blue: #032b43; */
-    /*     --brown: #4e3818; */
 }
 
 body {
     margin: 0px;
     background-color: var(--grey);
-    /* background-image: url("../../img/weedtree.jpg"); */
 }
 
 .container {
@@ -29,7 +16,6 @@ body {
 }
 
 .col-header {
-    flex: 1;
     background-color: var(--blue);
 }
 
@@ -41,7 +27,6 @@ body {
 }
 
 .navbar a {
-    margin-top: 10px;
     padding: 10px;
     background-color: var(--blue);
     float: top;
@@ -51,40 +36,48 @@ body {
     background-color: var(--light-blue);
 }
 
-.scroll {
-    margin: 0 auto;
-    max-width: 25em;
-}
-
-.col-scroll {
-    flex: 7;
-}
-
-.col-content {
-    flex: 9;
-    margin: 10px;
-    padding: 10px;
-    background-image: url("../../img/lake1.png");
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
-    border: solid;
-    border-radius: 20px;
-    border-color: var(--dark-blue);
-}
-
-.col-button {
+.interactive {
     flex: 1;
-    /* background-color: var(--light-green); */
-    background-image: url(../../img/thumbs-up.png);
-}
-
-.button-container {
+    background-color: var(--grey);
+    justify-content: center;
+    align-items: center;
     display: flex;
-    flex-direction: column;
-    align-content: center;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
 
-.row-button {
-    flex: 1;
+.img-wrapper {
+    aspect-ratio: 3/2;
+    width: 60%;
+    background-color: Red;
+    background-image: url("../../img/weedtree.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+@keyframes swipeRight {
+    0% {
+        transform: rotate(0deg) translateX(0) scale(1);
+    }
+    100% {
+        transform: rotate(45deg) translateX(1000px) scale(0.3);
+    }
+}
+
+.flyRight {
+    animation: swipeRight 0.5s ease-in;
+}
+
+@keyframes swipeLeft {
+    0% {
+        transform: rotate(0deg) translateX(0) scale(1);
+    }
+    100% {
+        transform: rotate(-45deg) translateX(-1000px) scale(0.3);
+    }
+}
+
+.flyLeft {
+    animation: swipeLeft 0.5s ease-in;
 }
