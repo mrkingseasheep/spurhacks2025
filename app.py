@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template
+from flask_cors import CORS
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
@@ -9,6 +10,9 @@ load_dotenv()
 uri = os.getenv("API_KEY")
 # uri = "mongodb+srv://<db_username>:<db_password>@judgejam.5bpp3ii.mongodb.net/?retryWrites=true&w=majority&appName=JudgeJam"
 print(uri)
+
+app = Flask(__name__)
+CORS(app)
 
 # Create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi("1"))
@@ -24,13 +28,24 @@ except Exception as e:
 
 park_db = client["ontario_parks"]
 campsites = park_db["campsites"]
+cursor = campsites.find()
 
 
 @app.route("/api/items")
 def get_items():
-    camps = list(campsites.find({}, {"_id: 0"}))
-    return jsonify(camps)
+    # camps = list(campsites.find({}, {"_id: 0"}))
+    # return jsonify(camps)
+    try:
+        next_camp = next(cursor, None)
+        return jsonify(next_camp)
 
+
+# cur_camp = get_items()
+# print(cur_camp)
+# cur_camp = get_items()
+# print(cur_camp)
+# cur_camp = get_items()
+# print(cur_camp)
 
 if __name__ == "__main__":
     app.run(debug=True)

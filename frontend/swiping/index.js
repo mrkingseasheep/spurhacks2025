@@ -9,6 +9,11 @@ function newSitePath() {
 
 nextBtn.addEventListener("click", () => {
     sitePic.classList.add("flyRight");
+    fetch(`http://localhost:5000/api/items`)
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data.get("Service Type"));
+        });
 });
 
 prevBtn.addEventListener("click", () => {
@@ -25,5 +30,9 @@ sitePic.addEventListener("animationend", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    fetch("/api/items");
+    fetch("/api/items")
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data.get("Service Type"));
+        });
 });
