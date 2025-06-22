@@ -46,6 +46,7 @@ def get_items():
     return jsonify(next_camp)
 
 
+
 results_db = client["results"]
 likes = results_db["likes"]
 hates = results_db["hates"]

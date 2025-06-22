@@ -30,6 +30,7 @@ body {
     padding: 10px;
     background-color: var(--blue);
     float: top;
+    color: white;
 }
 
 .navbar a:hover {
