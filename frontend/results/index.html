@@ -21,39 +21,42 @@
         <main>
             <section class="container">
                 <header class="column">
-                   <h1>'s Camping Trip</h1> 
+                    <h1>'s Camping Trip</h1>
                 </header>
                 <!--for the rankings -->
                 <div class="card" id="card1">
-                    <img id="img1" src="" alt="Campsite 1 Photo">
+                    <img id="img1" src="" alt="Campsite 1 Photo" />
                     <div class="overlay">
                         <h3 id="name1"></h3>
                     </div>
                 </div>
                 <div class="card" id="card2">
-                    <img id="img2" src="" alt="Campsite 2 Photo">
+                    <img id="img2" src="" alt="Campsite 2 Photo" />
                     <div class="overlay">
                         <h3 id="name2"></h3>
                     </div>
                 </div>
-                
             </section>
         </main>
-        
-        <script src="index.js"></script>
+
         <script>
-fetch("/api/top-campsites")
-  .then(response => response.json())
-  .then(data => {
-    if (data.length > 0) {
-      document.getElementById("img1").src = data[0].Photo;
-      document.getElementById("name1").textContent = "#1 " + data[0]["Provincial Park"];
-    }
-    if (data.length > 1) {
-      document.getElementById("img2").src = data[1].Photo;
-      document.getElementById("name2").textContent = "#2 " + data[1]["Provincial Park"];
-    }
-  });
-</script>
+            fetch("http://localhost:5000/api/top-campsites")
+                .then((response) => response.json())
+                .then((data) => {
+                    // console.log(data[0]["Photo"]);
+                    if (data.length > 0) {
+                        document.getElementById("img1").src =
+                            "../." + data[0]["Photo"];
+                        document.getElementById("name1").textContent =
+                            "#1 " + data[0]["Provincial Park"];
+                    }
+                    if (data.length > 1) {
+                        document.getElementById("img2").src =
+                            "../." + data[1]["Photo"];
+                        document.getElementById("name2").textContent =
+                            "#2 " + data[1]["Provincial Park"];
+                    }
+                });
+        </script>
     </body>
 </html>
