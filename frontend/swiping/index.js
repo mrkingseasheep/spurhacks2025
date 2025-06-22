@@ -23,3 +23,7 @@ sitePic.addEventListener("animationend", () => {
     sitePic.style.backgroundImage = `url(${newImagePath})`;
     console.log("flying right, weetree");
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/api/items");
+});
