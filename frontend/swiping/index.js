@@ -10,6 +10,8 @@ var img_path = "/path/to/nowhere";
 var privacy = "privacy";
 var likes = false;
 
+var likes = true;
+
 // ------------------------------------------------
 // -HARDWARE STUFF---------------------------------
 // ------------------------------------------------
@@ -94,7 +96,6 @@ connectBtn.addEventListener("click", async () => {
 // Button fallbacks
 
 prevBtn.addEventListener("click", () => {
-    sitePic.classList.remove("flyLeft");
     sitePic.classList.add("flyLeft");
     fetch("http://localhost:5000/api/items")
         .then((response) => response.json())
@@ -113,8 +114,6 @@ prevBtn.addEventListener("click", () => {
 });
 
 nextBtn.addEventListener("click", () => {
-    sitePic.classList.remove("flyRight");
-    void sitePic.offsetWidth;
     sitePic.classList.add("flyRight");
     fetch("http://localhost:5000/api/items")
         .then((response) => response.json())
