@@ -7,11 +7,10 @@
         <title>Grass is always greener on the other side</title>
         <link rel="stylesheet" href="./style.css" />
         <link rel="icon" href="./favicon.ico" type="image/x-icon" />
-        <script src="index.js"></script>
     </head>
     <body class="container">
         <header class="col-header">
-            <img src="../../img/logo.gif" />
+            <img src="../../img/logo.gif" class="flyRight" />
             <section class="navbar">
                 <a href="../../index.html">Home</a>
                 <a href="../../results/index.html">Results</a>
@@ -20,9 +19,14 @@
             </section>
         </header>
         <section class="interactive">
-            <button type="button" onclick="prevSite()">Previous image</button>
-            <div id="sitePic" class="img-wrapper"></div>
-            <button type="button" onclick="nextSite()">Next image</button>
+            <button id="prevBtn" type="button" onclick="prevSite()">
+                Previous image
+            </button>
+            <div id="sitePic" class="img-wrapper swipeRight"></div>
+            <button id="nextBtn" type="button" onclick="nextSite()">
+                Next image
+            </button>
         </section>
     </body>
+    <script src="index.js"></script>
 </html>

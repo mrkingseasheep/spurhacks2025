@@ -54,3 +54,29 @@ body {
     background-size: cover;
     background-position: center;
 }
+
+@keyframes swipeRight {
+    0% {
+        transform: rotate(0deg) translateX(0) scale(1);
+    }
+    100% {
+        transform: rotate(45deg) translateX(1000px) scale(0.3);
+    }
+}
+
+.flyRight {
+    animation: swipeRight 0.5s ease-in;
+}
+
+@keyframes swipeLeft {
+    0% {
+        transform: rotate(0deg) translateX(0) scale(1);
+    }
+    100% {
+        transform: rotate(-45deg) translateX(-1000px) scale(0.3);
+    }
+}
+
+.flyLeft {
+    animation: swipeLeft 0.5s ease-in;
+}
