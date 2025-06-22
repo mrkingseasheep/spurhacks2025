@@ -8,6 +8,7 @@ const infoBox = document.getElementById("useful-info");
 var camp_id = "xxx";
 var img_path = "/path/to/nowhere";
 var privacy = "privacy";
+var likes = false;
 
 var likes = true;
 
@@ -149,7 +150,7 @@ sitePic.addEventListener("animationend", () => {
         .then((response) => response.json())
         .then((result) => {
             console.log("Success:", result);
-            alert("Server response: " + result.message);
+            // alert("Server response: " + result.message);
         })
         .catch((error) => {
             console.error("Error:", error);

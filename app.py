@@ -74,8 +74,24 @@ def top_campsites():
         get_top_campsites,
     )  # You may need to adjust the import path
 
-    top_2 = get_top_campsites(2)
-    return jsonify(top_2)
+
+results_db = client["results"]
+likes = results_db["likes"]
+hates = results_db["hates"]
+
+
+@app.route("/submit", methods=["POST"])
+def submit():
+    data = request.json  # Expecting JSON data from client
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    if data["likes"]:
+        result = likes.insert_one(data)
+    else:
+        result = hates.insert_one(data)
+
+    return jsonify({"message": "Data inserted", "id": str(result.inserted_id)})
 
 
 if __name__ == "__main__":
