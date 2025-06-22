@@ -2,6 +2,10 @@ const sitePic = document.getElementById("sitePic");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 
+var camp_id = "xxx";
+var img_path = "/path/to/nowhere";
+var privacy = "privacy";
+
 // Add a temporary connect button to start the serial connection
 const connectBtn = document.createElement("button");
 connectBtn.textContent = "Connect to Arduino";
@@ -84,13 +88,26 @@ connectBtn.addEventListener("click", async () => {
 
 // Button fallbacks
 prevBtn.addEventListener("click", () => {
-  sitePic.classList.remove("flyLeft");
+    sitePic.classList.remove("flyLeft");
   void sitePic.offsetWidth;
   sitePic.classList.add("flyLeft");
+});
+
+sitePic.addEventListener("animationend", () => {
+    sitePic.classList.remove("flyRight");
+    sitePic.classList.remove("flyLeft");
 });
 
 nextBtn.addEventListener("click", () => {
   sitePic.classList.remove("flyRight");
   void sitePic.offsetWidth;
   sitePic.classList.add("flyRight");
+      fetch("http://localhost:5000/api/items")
+        .then((response) => response.json())
+        .then((data) => {
+            camp_id = data["_id"];
+            img_path = data["Campsite Photo"];
+            privacy = data["Privacy"];
+            console.log(data["Privacy"]);
+        });
 });
