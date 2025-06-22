@@ -9,20 +9,17 @@
         <link rel="icon" href="./favicon.ico" type="image/x-icon" />
     </head>
     <body>
-        <header class="col-header">
-            <img src="../../img/logo.gif" class="flyRight" />
-            <section class="navbar">
-                <a href="../../index.html">Home</a>
-                <a href="../results/index.html">Results</a>
-                <a href="#">Register</a>
-                <a href="#">About</a>
-            </section>
-        </header>
-        <main>
-            <section class="container">
-                <header class="column">
-                   <h1>'s Camping Trip</h1> 
-                </header>
+        <section class="container">
+            <aside class="sidebar">
+                <img src="../../img/logo.gif" class="flyRight" />
+                <nav class="navbar">
+                    <a href="../../index.html">Home</a>
+                    <a href="../results/index.html">Results</a>
+                    <a href="../login/index.html">Register</a>
+                    <a href="../about/index.html">About</a>
+                </nav>
+            </aside>
+            <main>
                 <!--for the rankings -->
                 <div class="card" id="card1">
                     <img id="img1" src="" alt="Campsite 1 Photo">
@@ -36,10 +33,8 @@
                         <h3 id="name2"></h3>
                     </div>
                 </div>
-                
-            </section>
-        </main>
-        
+            </main>
+        </section>
         <script src="index.js"></script>
         <script>
 fetch("/api/top-campsites")
@@ -54,6 +49,6 @@ fetch("/api/top-campsites")
       document.getElementById("name2").textContent = "#2 " + data[1]["Provincial Park"];
     }
   });
-</script>
+        </script>
     </body>
 </html>
