@@ -46,5 +46,13 @@ def get_items():
     return jsonify(next_camp)
 
 
+@app.route("/api/top-campsites")
+def top_campsites():
+    from Backend.SwipeStats import get_top_campsites  # You may need to adjust the import path
+
+    top_2 = get_top_campsites(2)
+    return jsonify(top_2)
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
