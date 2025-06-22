@@ -237,7 +237,7 @@ if __name__ == '__main__':
     output_path = "campsite_data.json"
 
     # --- MongoDB setup (before your main loops) ---
-    uri = "mongodb+srv://ethanoly:nyCknT3J8fOPwLz0@judgejam.5bpp3ii.mongodb.net/?retryWrites=true&w=majority&appName=JudgeJam"
+    uri = os.getenv("API_KEY")
     client = MongoClient(uri,tls=True, server_api=ServerApi('1'))
     db = client["ontario_parks"]
     collection = db["campsites"]
@@ -249,7 +249,7 @@ if __name__ == '__main__':
         print(e)
 
     # --- Loop through regions ---
-    region_texts = get_maplink_button_texts(driver)[0:]  # Skip the first region button
+    region_texts = get_maplink_button_texts(driver)[4:]  # Skip the first region button
     for region_text in region_texts:
         click_maplink_by_text(driver, region_text)
         time.sleep(2)
