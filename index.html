@@ -1,0 +1,68 @@
+<!--updated arduino link-->
+
+<html>
+<body>
+  <h1>Joystick Reader (X & Y)</h1>
+  <button id="connect">Connect to Arduino</button>
+  <div id="output">Waiting for connection...</div>
+
+  <script>
+    const connectButton = document.getElementById('connect');
+    const output = document.getElementById('output');
+
+    connectButton.addEventListener('click', async () => {
+      try {
+        const port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 9600 });
+
+        const decoder = new TextDecoderStream();
+        const inputDone = port.readable.pipeTo(decoder.writable);
+        const inputStream = decoder.readable;
+
+        // Read line by line using line transformer
+        const lineStream = inputStream.pipeThrough(new TransformStream({
+          start() {
+            this.buffer = '';
+          },
+          transform(chunk, controller) {
+            this.buffer += chunk;
+            const lines = this.buffer.split('\n');
+            this.buffer = lines.pop(); // hold onto the last partial line
+            lines.forEach(line => controller.enqueue(line.trim()));
+          },
+          flush(controller) {
+            if (this.buffer) {
+              controller.enqueue(this.buffer.trim());
+            }
+          }
+        }));
+
+        const reader = lineStream.getReader();
+
+        output.textContent = "Connected! Waiting for data...\n";
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          if (value) {
+            const parts = value.split(',').map(Number);
+            if (parts.length === 2 && parts.every(n => !isNaN(n))) {
+              const [x, y] = parts;
+              output.textContent = `X: ${x}\nY: ${y}`;
+              console.log(`X: ${x}\nY: ${y}`);
+            } else {
+              console.warn('Malformed line:', value);
+            }
+          }
+        }
+
+        reader.releaseLock();
+      } catch (err) {
+        console.error('Serial error:', err);
+        output.textContent = 'Error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
+<a href="Frontend/swiping/index.html">Go to main</a>
