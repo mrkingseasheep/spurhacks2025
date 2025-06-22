@@ -28,7 +28,10 @@ except Exception as e:
 
 park_db = client["ontario_parks"]
 campsites = park_db["campsites"]
+<<<<<<< HEAD
 # cursor = campsites.find({}, {"_id": 0})
+=======
+>>>>>>> parent of 9a53ed7 (help cors being bitch)
 cursor = campsites.find()
 
 
@@ -36,8 +39,9 @@ cursor = campsites.find()
 def get_items():
     # camps = list(campsites.find({}, {"_id: 0"}))
     # return jsonify(camps)
-    next_camp = next(cursor, None)
-    return jsonify(next_camp)
+    try:
+        next_camp = next(cursor, None)
+        return jsonify(next_camp)
 
 
 # cur_camp = get_items()
@@ -47,6 +51,7 @@ def get_items():
 # cur_camp = get_items()
 # print(cur_camp)
 
+<<<<<<< HEAD
 
 info_db = client["results"]
 like_collection = info_db["liked_collection"]
@@ -75,5 +80,7 @@ def add_item():
     return jsonify({"message": "added", "id": str(results.inserted_id)})
 
 
+=======
+>>>>>>> parent of 9a53ed7 (help cors being bitch)
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

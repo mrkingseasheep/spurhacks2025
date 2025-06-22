@@ -1,5 +1,4 @@
 const sitePic = document.getElementById("sitePic");
-const picture = document.getElementById("picture");
 const nextBtn = document.getElementById("nextBtn");
 const prevBtn = document.getElementById("prevBtn");
 
@@ -43,14 +42,8 @@ nextBtn.addEventListener("click", () => {
     //
     fetch(`http://localhost:5000/api/items`)
         .then((response) => response.json())
-        .then(delay(2000))
         .then((data) => {
-            console.log(data);
-            console.log(data["Campsite Photo"]);
-            // sitePic.style.backgroundImage = `url(${data["Campsite Photo"]})`;
-            newImagePath = data["Campsite Photo"];
-            cur_id = data["_id"];
-            // picture.src = data["Campsite Photo"];
+            console.log(data.get("Service Type"));
         });
 });
 
@@ -67,10 +60,10 @@ sitePic.addEventListener("animationend", () => {
     console.log("flying right, weetree");
 });
 
-// document.addEventListener("DOMContentLoaded", () => {
-//     fetch("/api/items")
-//         .then((response) => response.json())
-//         .then((data) => {
-//             console.log(data.get("Service Type"));
-//         });
-// });
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/api/items")
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data.get("Service Type"));
+        });
+});
