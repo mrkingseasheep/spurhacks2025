@@ -28,16 +28,15 @@ except Exception as e:
 
 park_db = client["ontario_parks"]
 campsites = park_db["campsites"]
-cursor = campsites.find()
+cursor = campsites.find({}, {"_id": 0})
 
 
 @app.route("/api/items")
 def get_items():
     # camps = list(campsites.find({}, {"_id: 0"}))
     # return jsonify(camps)
-    try:
-        next_camp = next(cursor, None)
-        return jsonify(next_camp)
+    next_camp = next(cursor, None)
+    return jsonify(next_camp)
 
 
 # cur_camp = get_items()
@@ -46,6 +45,25 @@ def get_items():
 # print(cur_camp)
 # cur_camp = get_items()
 # print(cur_camp)
+
+
+info_db = client["results"]
+like_collection = info_db["liked_collection"]
+dislike_collection = info_db["disliked_collection"]
+
+
+@app.route("/api/add-item", methods=["POST"])
+def add_item():
+    data = request.get_json()
+    if not data or "title" not in data or "description" not in data:
+        return jsonify({"error": "Bro you suck"}), 400
+
+    result = like_collection.insert_one(
+        {"title": data["title"], "description": data["discription"], "_id": data["_id"]}
+    )
+
+    return jsonify({"message": "added", "id": str(results.inserted_id)})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
