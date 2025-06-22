@@ -48,9 +48,10 @@ body {
 }
 
 .img-wrapper {
+    position: relative;
     aspect-ratio: 3/2;
     width: 60%;
-    background-color: Red;
+    background-color: var(--light-blue);
     background-image: url("../../img/weedtree.jpg");
     background-size: cover;
     background-position: center;
@@ -80,4 +81,30 @@ body {
 
 .flyLeft {
     animation: swipeLeft 0.5s ease-in;
+}
+
+.overlay {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    background-color: rgba(183, 222, 237, 0.7);
+    /* background-color: var(--blue); */
+}
+
+.overlay h1 {
+    opacity: 100%;
+    font-size: 20px;
+    padding: 10px;
+    padding-bottom: 0px;
+    margin: 0px;
+}
+
+.overlay p {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    opacity: 100%;
+    padding: 10px;
+    text: wrap;
+    margin: 0px;
 }

@@ -1,6 +1,8 @@
 const sitePic = document.getElementById("sitePic");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
+const infoHeader = document.getElementById("location");
+const infoBox = document.getElementById("useful-info");
 
 // variables for the image overlay
 var camp_id = "xxx";
@@ -103,8 +105,13 @@ nextBtn.addEventListener("click", () => {
         .then((response) => response.json())
         .then((data) => {
             camp_id = data["_id"];
-            img_path = data["Campsite Photo"];
+            img_path = "../." + data["Campsite Photo"];
             privacy = data["Privacy"];
+            infoBox.textContent =
+                data["Service Type"] + " " + data["Adjacent to"];
+            infoHeader.textContent =
+                data["Provincial Park"] + " " + data["Campsite number"];
+            sitePic.style.backgroundImage = `url(${img_path})`;
             console.log(data["Privacy"]);
         });
 });
