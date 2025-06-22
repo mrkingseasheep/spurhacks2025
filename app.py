@@ -28,10 +28,6 @@ except Exception as e:
 
 park_db = client["ontario_parks"]
 campsites = park_db["campsites"]
-<<<<<<< HEAD
-# cursor = campsites.find({}, {"_id": 0})
-=======
->>>>>>> parent of 9a53ed7 (help cors being bitch)
 cursor = campsites.find()
 
 
@@ -39,9 +35,8 @@ cursor = campsites.find()
 def get_items():
     # camps = list(campsites.find({}, {"_id: 0"}))
     # return jsonify(camps)
-    try:
-        next_camp = next(cursor, None)
-        return jsonify(next_camp)
+    next_camp = next(cursor, None)
+    return jsonify(next_camp)
 
 
 # cur_camp = get_items()
@@ -51,36 +46,5 @@ def get_items():
 # cur_camp = get_items()
 # print(cur_camp)
 
-<<<<<<< HEAD
-
-info_db = client["results"]
-like_collection = info_db["liked_collection"]
-dislike_collection = info_db["disliked_collection"]
-
-
-@app.route("/api/add-item", methods=["POST"])
-def add_item():
-    data = request.get_json()
-    if not data or "title" not in data or "description" not in data:
-        return jsonify({"error": "Bro you suck"}), 400
-
-    print("this shows that the data should be parsed")
-    if data["liked"]:
-        print("hi")
-
-    result = like_collection.insert_one(
-        {
-            "title": data["title"],
-            "description": data["discription"],
-            "_id": data["_id"],
-            "liked": data["liked"],
-        }
-    )
-
-    return jsonify({"message": "added", "id": str(results.inserted_id)})
-
-
-=======
->>>>>>> parent of 9a53ed7 (help cors being bitch)
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
