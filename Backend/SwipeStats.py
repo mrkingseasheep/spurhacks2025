@@ -51,6 +51,7 @@ if scores:
             "id": best_cid,
             "Provincial Park": site.get("Provincial Park"),
             "Campsite number": site.get("Campsite number"),
+            "Photo": site.get("Campsite Photo"),  # Use this field
             "Score": scores[best_cid]
         })
 
@@ -65,5 +66,21 @@ if scores:
                 "id": cid,
                 "Provincial Park": site.get("Provincial Park"),
                 "Campsite number": site.get("Campsite number"),
+                "Photo": site.get("Campsite Photo"),  # Use this field
                 "Score": score
             })
+
+def get_top_campsites(n=2):
+    top_n = sorted(scores.items(), key=lambda item: item[1], reverse=True)[:n]
+    result = []
+    for cid, score in top_n:
+        site = campsite_data.get(cid)
+        if site:
+            result.append({
+                "id": cid,
+                "Provincial Park": site.get("Provincial Park"),
+                "Campsite number": site.get("Campsite number"),
+                "Photo": site.get("Campsite Photo"),
+                "Score": score
+            })
+    return result

@@ -24,32 +24,16 @@
                    <h1>'s Camping Trip</h1> 
                 </header>
                 <!--for the rankings -->
-                <div class= "card">
-                    <img src="C:\Users\vanes\Downloads\spurhacks2025\img\lake1.png">
-                    <div class = "overlay">
-                        <h3>#1 + Campstite name</h3>
-                       <p id="myParagraph"></p>
-
-                        <script>
-                        const url = "https://www.google.com/";
-                        document.getElementById("myParagraph").innerHTML =
-                        `<a href="${url}" target="_blank">${url}</a>`;
-                        </script>
-
-
+                <div class="card" id="card1">
+                    <img id="img1" src="" alt="Campsite 1 Photo">
+                    <div class="overlay">
+                        <h3 id="name1"></h3>
                     </div>
                 </div>
-                <div class= "card">
-                    <img src="C:\Users\vanes\Downloads\spurhacks2025\img\lake1.png">
-                    <div class = "overlay">
-                        <h3>#2 + Campstite name</h3>
-                        <p id="myParagraph2"></p>
-
-                        <script>
-                        const url2 = "https://www.google.com/";
-                        document.getElementById("myParagraph2").innerHTML =
-                        `<a href="${url2}" target="_blank">${url2}</a>`;
-                        </script>
+                <div class="card" id="card2">
+                    <img id="img2" src="" alt="Campsite 2 Photo">
+                    <div class="overlay">
+                        <h3 id="name2"></h3>
                     </div>
                 </div>
                 
@@ -57,5 +41,19 @@
         </main>
         
         <script src="index.js"></script>
+        <script>
+fetch("/api/top-campsites")
+  .then(response => response.json())
+  .then(data => {
+    if (data.length > 0) {
+      document.getElementById("img1").src = data[0].Photo;
+      document.getElementById("name1").textContent = "#1 " + data[0]["Provincial Park"];
+    }
+    if (data.length > 1) {
+      document.getElementById("img2").src = data[1].Photo;
+      document.getElementById("name2").textContent = "#2 " + data[1]["Provincial Park"];
+    }
+  });
+</script>
     </body>
 </html>

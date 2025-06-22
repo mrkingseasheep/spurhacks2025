@@ -82,14 +82,9 @@ body {
     flex-direction: column;
     overflow: hidden;
     background-color: var(--blue);
-    height
+    height: 100%;
 }
 
-.navbar a {
-    padding: 10px;
-    background-color: var(--blue);
-    float: top;
-}
 
 
 
