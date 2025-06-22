@@ -6,6 +6,9 @@ from flask_cors import CORS
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
+# THIS IS A BUFFER COMMIT
+
+
 load_dotenv()
 uri = os.getenv("API_KEY")
 # uri = "mongodb+srv://<db_username>:<db_password>@judgejam.5bpp3ii.mongodb.net/?retryWrites=true&w=majority&appName=JudgeJam"
@@ -67,8 +70,9 @@ def submit():
 
 @app.route("/api/top-campsites")
 def top_campsites():
-    from Backend.SwipeStats import \
-        get_top_campsites  # You may need to adjust the import path
+    from Backend.SwipeStats import (
+        get_top_campsites,
+    )  # You may need to adjust the import path
 
     top_2 = get_top_campsites(2)
     return jsonify(top_2)
