@@ -35,20 +35,23 @@
                 </div>
             </main>
         </section>
-        <script src="index.js"></script>
         <script>
-fetch("/api/top-campsites")
-  .then(response => response.json())
-  .then(data => {
-    if (data.length > 0) {
-      document.getElementById("img1").src = data[0].Photo;
-      document.getElementById("name1").textContent = "#1 " + data[0]["Provincial Park"];
-    }
-    if (data.length > 1) {
-      document.getElementById("img2").src = data[1].Photo;
-      document.getElementById("name2").textContent = "#2 " + data[1]["Provincial Park"];
-    }
-  });
+            fetch("http://localhost:5000/api/top-campsites")
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.length > 0) {
+                        document.getElementById("img1").src =
+                            "../." + data[0]["Photo"];
+                        document.getElementById("name1").textContent =
+                            "#1 " + data[0]["Provincial Park"];
+                    }
+                    if (data.length > 1) {
+                        document.getElementById("img2").src =
+                            "../." + data[1]["Photo"];
+                        document.getElementById("name2").textContent =
+                            "#2 " + data[1]["Provincial Park"];
+                    }
+                });
         </script>
     </body>
 </html>
