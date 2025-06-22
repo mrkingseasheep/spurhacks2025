@@ -2,9 +2,14 @@ const sitePic = document.getElementById("sitePic");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 
+// variables for the image overlay
 var camp_id = "xxx";
 var img_path = "/path/to/nowhere";
 var privacy = "privacy";
+
+// ------------------------------------------------
+// -HARDWARE STUFF---------------------------------
+// ------------------------------------------------
 
 // Add a temporary connect button to start the serial connection
 const connectBtn = document.createElement("button");
@@ -19,90 +24,82 @@ let lastTriggerTime = 0;
 const DEBOUNCE = 500;
 
 function handleJoystick(x) {
-  const now = Date.now();
-  if (now - lastTriggerTime < DEBOUNCE) return;
+    const now = Date.now();
+    if (now - lastTriggerTime < DEBOUNCE) return;
 
-  if (x < 300) {
-    sitePic.classList.remove("flyLeft");
-    void sitePic.offsetWidth;
-    sitePic.classList.add("flyLeft");
-    console.log("flyLeft");
-    lastTriggerTime = now;
-  } else if (x > 700) {
-    sitePic.classList.remove("flyRight");
-    void sitePic.offsetWidth;
-    sitePic.classList.add("flyRight");
-    console.log("flyRight");
-    lastTriggerTime = now;
-  }
+    if (x < 300) {
+        sitePic.classList.remove("flyLeft");
+        void sitePic.offsetWidth;
+        sitePic.classList.add("flyLeft");
+        // console.log("flyLeft");
+        lastTriggerTime = now;
+    } else if (x > 700) {
+        sitePic.classList.remove("flyRight");
+        void sitePic.offsetWidth;
+        sitePic.classList.add("flyRight");
+        // console.log("flyRight");
+        lastTriggerTime = now;
+    }
 }
-
-// Listen for animation end to remove class
-sitePic.addEventListener("animationend", () => {
-  sitePic.classList.remove("flyLeft");
-  sitePic.classList.remove("flyRight");
-
-  // Change background image (optional)
-  sitePic.style.backgroundImage = `url('../../img/weedtree.jpg')`;
-});
 
 // Serial connection
 connectBtn.addEventListener("click", async () => {
-  try {
-    const port = await navigator.serial.requestPort();
-    await port.open({ baudRate: 9600 });
-    connectBtn.style.display = "none";
+    try {
+        const port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 9600 });
+        connectBtn.style.display = "none";
 
-    const decoder = new TextDecoderStream();
-    port.readable.pipeTo(decoder.writable);
-    const input = decoder.readable
-      .pipeThrough(new TransformStream({
-        start() { this.buffer = ""; },
-        transform(chunk, controller) {
-          this.buffer += chunk;
-          const lines = this.buffer.split("\n");
-          this.buffer = lines.pop();
-          lines.forEach(line => controller.enqueue(line.trim()));
-        },
-        flush(controller) {
-          if (this.buffer) controller.enqueue(this.buffer.trim());
-        }
-      }))
-      .getReader();
+        const decoder = new TextDecoderStream();
+        port.readable.pipeTo(decoder.writable);
+        const input = decoder.readable
+            .pipeThrough(
+                new TransformStream({
+                    start() {
+                        this.buffer = "";
+                    },
+                    transform(chunk, controller) {
+                        this.buffer += chunk;
+                        const lines = this.buffer.split("\n");
+                        this.buffer = lines.pop();
+                        lines.forEach((line) =>
+                            controller.enqueue(line.trim()),
+                        );
+                    },
+                    flush(controller) {
+                        if (this.buffer) controller.enqueue(this.buffer.trim());
+                    },
+                }),
+            )
+            .getReader();
 
-    while (true) {
-      const { value, done } = await input.read();
-      if (done) break;
-      if (value) {
-        const parts = value.split(',').map(Number);
-        if (parts.length === 2 && parts.every(n => !isNaN(n))) {
-          const [x, y] = parts;
-          handleJoystick(x); // 👈 only care about X for left/right
+        while (true) {
+            const { value, done } = await input.read();
+            if (done) break;
+            if (value) {
+                const parts = value.split(",").map(Number);
+                if (parts.length === 2 && parts.every((n) => !isNaN(n))) {
+                    const [x, y] = parts;
+                    handleJoystick(x); // 👈 only care about X for left/right
+                }
+            }
         }
-      }
+    } catch (err) {
+        console.error("Serial error:", err);
     }
-  } catch (err) {
-    console.error("Serial error:", err);
-  }
 });
 
 // Button fallbacks
+
 prevBtn.addEventListener("click", () => {
     sitePic.classList.remove("flyLeft");
-  void sitePic.offsetWidth;
-  sitePic.classList.add("flyLeft");
-});
-
-sitePic.addEventListener("animationend", () => {
-    sitePic.classList.remove("flyRight");
-    sitePic.classList.remove("flyLeft");
+    sitePic.classList.add("flyLeft");
 });
 
 nextBtn.addEventListener("click", () => {
-  sitePic.classList.remove("flyRight");
-  void sitePic.offsetWidth;
-  sitePic.classList.add("flyRight");
-      fetch("http://localhost:5000/api/items")
+    sitePic.classList.remove("flyRight");
+    void sitePic.offsetWidth;
+    sitePic.classList.add("flyRight");
+    fetch("http://localhost:5000/api/items")
         .then((response) => response.json())
         .then((data) => {
             camp_id = data["_id"];
@@ -110,4 +107,10 @@ nextBtn.addEventListener("click", () => {
             privacy = data["Privacy"];
             console.log(data["Privacy"]);
         });
+});
+
+sitePic.addEventListener("animationend", () => {
+    sitePic.classList.remove("flyRight");
+    sitePic.classList.remove("flyLeft");
+    //     sitePic.style.backgroundImage = `url('../../img/weedtree.jpg')`;
 });
