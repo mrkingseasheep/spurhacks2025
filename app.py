@@ -33,8 +33,7 @@ cursor = campsites.find()
 
 @app.route("/api/items")
 def get_items():
-    # camps = list(campsites.find({}, {"_id: 0"}))
-    # return jsonify(camps)
+    print("getting itmes")
     next_camp = next(cursor, None)
     if not next_camp:
         return jsonify({"message": "No more items"})
@@ -42,16 +41,10 @@ def get_items():
     # Convert _id to string
     if "_id" in next_camp:
         next_camp["_id"] = str(next_camp["_id"])
+        print(next_camp["_id"])
 
     return jsonify(next_camp)
 
-
-# cur_camp = get_items()
-# print(cur_camp)
-# cur_camp = get_items()
-# print(cur_camp)
-# cur_camp = get_items()
-# print(cur_camp)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
