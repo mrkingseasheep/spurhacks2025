@@ -1,89 +1,69 @@
 from pymongo import MongoClient
-from pymongo.server_api import ServerApi
 from bson import ObjectId
+import os
+from dotenv import load_dotenv
 
-# MongoDB connection
-uri = "mongodb+srv://ethanoly:nyCknT3J8fOPwLz0@judgejam.5bpp3ii.mongodb.net/?retryWrites=true&w=majority&appName=JudgeJam"
-client = MongoClient(uri, server_api=ServerApi("1"))
-db = client["ontario_parks"]
-collection = db["campsites"]
+# Load MongoDB Atlas URI from .env
+load_dotenv()
+uri = os.getenv("API_KEY")
+client = MongoClient(uri)
 
-# --- Group Preferences (not per person, just two categories) ---
-group_preferences = {
-    "like": ["68577d8d70302442e5f73ac0", "68577a5370302442e5f739e8"],
-    "dislike": ["68577d8d70302442e5f73ac1"]
-}
+# Connect to results db for swipes
+results_db = client["results"]
+likes_collection = results_db["likes"]
+hates_collection = results_db["hates"]
 
-# --- Weights ---
-PREFERENCE_WEIGHTS = {
-    "like": 1.5,
-    "dislike": 0.3
-}
+# Connect to ontario_parks db for campsites
+parks_db = client["ontario_parks"]
+campsites_collection = parks_db["campsites"]
 
-# --- Step 1: Gather all unique campsite IDs ---
-def get_all_preference_ids(preferences):
-    all_ids = set()
-    for key in ["like", "dislike"]:
-        all_ids.update(preferences.get(key, []))
-    return list(all_ids)
+FIELD = "id"  # The field in likes/hates that references the campsite as a string
 
-def fetch_campsite_docs(ids):
-    object_ids = [ObjectId(cid) for cid in ids]
-    docs = collection.find({"_id": {"$in": object_ids}})
-    return {str(doc["_id"]): doc for doc in docs}
+# Get all liked and hated campsite ids (as strings)
+like_ids = [doc[FIELD] for doc in likes_collection.find() if FIELD in doc]
+hate_ids = [doc[FIELD] for doc in hates_collection.find() if FIELD in doc]
+all_ids = list(set(like_ids + hate_ids))
 
-# --- Step 2: Score each campsite ---
-def score_campsites(preferences, campsite_data):
-    scores = {}
-    max_score = 0
-    for cid in campsite_data:
-        score = 0
-        for pref_type, weight in PREFERENCE_WEIGHTS.items():
-            if cid in preferences.get(pref_type, []):
-                score += weight
-        scores[cid] = score
-        if score > max_score:
-            max_score = score
-    return scores, max_score
+# Convert string ids to ObjectId for querying campsites
+object_ids = [ObjectId(cid) for cid in all_ids]
 
-# --- Step 3: Normalize and rate ---
-def rate_campsites(scores, max_score):
-    ratings = {}
-    for cid, score in scores.items():
-        if max_score == 0:
-            norm = 0
-        else:
-            norm = score / max_score
-        match_distance = abs(norm - 0.9)
-        ratings[cid] = {
-            "normalized_score": round(norm, 3),
-            "match_distance": round(match_distance, 3)
-        }
-    return ratings
+# Fetch campsite documents from ontario_parks.campsites
+campsite_docs = campsites_collection.find({"_id": {"$in": object_ids}})
+campsite_data = {str(doc["_id"]): doc for doc in campsite_docs}
 
-def pick_best_campsites(ratings, campsite_data, top_n=1):
-    # Sort by match_distance (closest to 0.9)
-    sorted_sites = sorted(ratings.items(), key=lambda x: x[1]['match_distance'])
-    best = []
-    for cid, rating in sorted_sites[:top_n]:
-        site = campsite_data[cid]
-        best.append({
-            "id": cid,
+# Score: +1 for like, -0.2 for hate
+scores = {}
+for cid in all_ids:
+    score = 0
+    if cid in like_ids:
+        score += 1
+    if cid in hate_ids:
+        score -= 0.4
+    scores[cid] = score
+
+# Find and print the campsite with the highest score
+if scores:
+    best_cid = max(scores, key=lambda cid: scores[cid])
+    site = campsite_data.get(best_cid)
+    if site:
+        print("\n⛺ Campsite With Highest Score:\n")
+        print({
+            "id": best_cid,
             "Provincial Park": site.get("Provincial Park"),
             "Campsite number": site.get("Campsite number"),
-            "Score": rating["normalized_score"],
-            "Distance from 0.9": rating["match_distance"]
+            "Score": scores[best_cid]
         })
-    return best
 
-# --- Main Execution ---
-all_ids = get_all_preference_ids(group_preferences)
-campsite_data = fetch_campsite_docs(all_ids)
-scores, max_score = score_campsites(group_preferences, campsite_data)
-ratings = rate_campsites(scores, max_score)
-
-best_campsites = pick_best_campsites(ratings, campsite_data, top_n=3)  # top 3 matches
-
-print("\n🌟 Best Matched Campsites:\n")
-for site in best_campsites:
-    print(site)
+# Find the top 3 campsites with the highest scores
+if scores:
+    top_3 = sorted(scores.items(), key=lambda item: item[1], reverse=True)[:3]
+    print("\n⛺ Top 3 Campsites With Highest Scores:\n")
+    for cid, score in top_3:
+        site = campsite_data.get(cid)
+        if site:
+            print({
+                "id": cid,
+                "Provincial Park": site.get("Provincial Park"),
+                "Campsite number": site.get("Campsite number"),
+                "Score": score
+            })
