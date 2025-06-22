@@ -18,32 +18,10 @@ let user_response = {
 };
 
 nextBtn.addEventListener("click", () => {
-    // user_response["liked"] = true;
-    // sitePic.classList.add("flyRight");
-    // console.log();
-    // fetch("http://localhost:5000/api/add_item", {
-    //     method: "POST",
-    //     headers: {
-    //         "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(user_response),
-    // })
-    //     .then((response) => response.json()) // 4️⃣ Wait for the server’s response, then parse it as JSON
-    //     .then((data) => {
-    //         if (data.error) {
-    //             console.error("Error:", data.error); // 5️⃣ If server sent an error, log it
-    //         } else {
-    //             console.log("Success:", data.message, "New ID:", data.id); // 6️⃣ Otherwise, log success message and inserted item ID
-    //         }
-    //     })
-    //     .catch((err) => {
-    //         console.error("Fetch error:", err); // 7️⃣ If something went wrong with the request itself (like network error), catch it here
-    //     });
-    //
     fetch(`http://localhost:5000/api/items`)
         .then((response) => response.json())
         .then((data) => {
-            console.log(data.get("Service Type"));
+            console.log(data["Privacy"]);
         });
 });
 

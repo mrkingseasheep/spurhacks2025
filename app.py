@@ -36,6 +36,13 @@ def get_items():
     # camps = list(campsites.find({}, {"_id: 0"}))
     # return jsonify(camps)
     next_camp = next(cursor, None)
+    if not next_camp:
+        return jsonify({"message": "No more items"})
+
+    # Convert _id to string
+    if "_id" in next_camp:
+        next_camp["_id"] = str(next_camp["_id"])
+
     return jsonify(next_camp)
 
 
