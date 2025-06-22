@@ -46,12 +46,10 @@ function handleJoystick(x) {
 
 // Serial connection
 connectBtn.addEventListener("click", async () => {
-
     try {
         const port = await navigator.serial.requestPort();
         await port.open({ baudRate: 9600 });
         connectBtn.style.display = "none";
-
 
         const decoder = new TextDecoderStream();
         port.readable.pipeTo(decoder.writable);
@@ -97,6 +95,19 @@ connectBtn.addEventListener("click", async () => {
 prevBtn.addEventListener("click", () => {
     sitePic.classList.remove("flyLeft");
     sitePic.classList.add("flyLeft");
+    fetch("http://localhost:5000/api/items")
+        .then((response) => response.json())
+        .then((data) => {
+            camp_id = data["_id"];
+            img_path = "../." + data["Campsite Photo"];
+            privacy = data["Privacy"];
+            infoBox.textContent =
+                data["Service Type"] + " " + data["Adjacent to"];
+            infoHeader.textContent =
+                data["Provincial Park"] + " " + data["Campsite number"];
+            sitePic.style.backgroundImage = `url(${img_path})`;
+            console.log(data["Privacy"]);
+        });
 });
 
 nextBtn.addEventListener("click", () => {

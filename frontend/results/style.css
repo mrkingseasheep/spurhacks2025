@@ -4,6 +4,14 @@
     box-sizing: border-box;
     font-family: sans-serif;
 }
+
+:root {
+    --dark-blue: #333446;
+    --blue: #7f8caa;
+    --light-blue: #b8cfce;
+    --grey: #eaefef;
+}
+
 .navbar {
     display: flex;
     flex-direction: column;

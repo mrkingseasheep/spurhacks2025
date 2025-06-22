@@ -1,3 +1,10 @@
+:root {
+    --dark-blue: #333446;
+    --blue: #7f8caa;
+    --light-blue: #b8cfce;
+    --grey: #eaefef;
+}
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -19,6 +26,12 @@ body {
     color: white;
     text-decoration: none;
     font-weight: bold;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.sidebar a:hover {
+    background-color: var(--light-blue);
 }
 
 /* Main content */
