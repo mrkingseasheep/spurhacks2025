@@ -50,5 +50,7 @@ body {
     aspect-ratio: 3/2;
     width: 60%;
     background-color: Red;
-    /* background-image: url("../../img/weedtree.jpg"); */
+    background-image: url("../../img/weedtree.jpg");
+    background-size: cover;
+    background-position: center;
 }

@@ -7,6 +7,7 @@
         <title>Grass is always greener on the other side</title>
         <link rel="stylesheet" href="./style.css" />
         <link rel="icon" href="./favicon.ico" type="image/x-icon" />
+        <script src="index.js"></script>
     </head>
     <body class="container">
         <header class="col-header">
@@ -19,7 +20,9 @@
             </section>
         </header>
         <section class="interactive">
-            <div class="img-wrapper"></div>
+            <button type="button" onclick="prevSite()">Previous image</button>
+            <div id="sitePic" class="img-wrapper"></div>
+            <button type="button" onclick="nextSite()">Next image</button>
         </section>
     </body>
 </html>
